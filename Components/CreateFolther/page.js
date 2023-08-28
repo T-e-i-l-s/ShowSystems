@@ -68,7 +68,7 @@ export default function App({ route, navigation }) {
 
   const saveData = async () => { // Функция обработки данных из поля textInput
 
-    const cityRef = await doc(db, 'ShowSystems', 'Folthers');
+    const cityRef = await doc(db, 'ShowSystems', 'Folders');
 
     await setDoc(cityRef, { [name]: [] }, { merge: true });
     let arr = param[1]

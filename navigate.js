@@ -1,7 +1,7 @@
 import login from './Components/Login/page'
 import menu from   './Components/Menu/page'
 import range from   './Components/Range/page'
-import addEquipment from './Components/addNew/page'
+import addEquipment from './Components/CreateObject/page'
 import createFolther from './Components/CreateFolther/page'
 import info from   './Components/Info/page'
 import create from './Components/Create/page'
@@ -35,7 +35,7 @@ export default function Navigate () {
         name="addEquipment"
         component={ addEquipment }
         options={ { headerShown: false, animationTypeForReplace: 'pop' } }
-        initialParams={{ }}
+        initialParams={[]}
       />
       <Stack.Screen
         name="createFolther"

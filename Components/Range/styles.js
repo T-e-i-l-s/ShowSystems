@@ -114,16 +114,14 @@ export default StyleSheet.create({
   
   list: { // Стиль списка устройств
 
-    width: '100%',
-    borderColor: '#333333'
+    width: '100%'
 
   },
 
   
   list2: { // Стиль списка устройств
 
-    width: '100%',
-    marginTop: 10,
+    width: '100%'
 
   },
 
@@ -131,7 +129,7 @@ export default StyleSheet.create({
   pathList: { // Стиль списка устройств
 
     width: '100%',
-    marginBottom: 20
+    marginBottom: 10
 
   },
 
@@ -140,28 +138,40 @@ export default StyleSheet.create({
 
     flexDirection: 'row',
 
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+
     width: '100%',
 
-    backgroundColor: '#e6e6e6',
+    backgroundColor: '#fff',
 
-    borderColor: '#333333',
-    borderBottomWidth: 2,
+    paddingVertical: 10,
+    marginBottom: 5,
 
-    paddingVertical: 13,
-    paddingHorizontal: 17,
+    borderRadius: 10,
 
   },
 
 
   folther: {
 
-    width: '80%',
+    width: '60%',
 
     fontSize: 20,
     textAlign: 'left',
     color: '#333333',
-    fontWeight: '500',
+    fontWeight: '600',
     fontFamily: 'rubik',
+
+  },
+
+
+  iconBlock: {
+
+    width: "20%",
+
+    alignItems: 'center',
+    justifyContent: 'center',
 
   },
 
@@ -170,8 +180,16 @@ export default StyleSheet.create({
 
     width: "20%",
 
-    alignItems: 'flex-end',
+    alignItems: 'center',
     justifyContent: 'center',
+
+  },
+
+
+  blockIcon: { // Стиль иконок
+
+    height: 25,
+    width: 25,
 
   },
 
@@ -194,16 +212,15 @@ export default StyleSheet.create({
     backgroundColor: '#fff',
 
     paddingVertical: 10,
-    paddingLeft: 20,
-    marginTop: 10,
+    marginBottom: 5,
 
-    borderRadius: 18,
+    borderRadius: 10,
 
   },
 
 
   top: {
-  
+    
     flexDirection: 'row',
     width: '100%'
 
@@ -212,7 +229,7 @@ export default StyleSheet.create({
 
   name: {
 
-    width: '95%',
+    width: '40%',
 
     fontSize: 19,
     textAlign: 'left',
@@ -223,12 +240,15 @@ export default StyleSheet.create({
   },
 
 
-  iconBlock: {
+  cnt: {
 
-    width: "5%",
+    width: '20%',
 
-    alignItems: 'flex-end',
-    justifyContent: 'center',
+    fontSize: 19,
+    textAlign: 'right',
+    color: '#333333',
+    fontWeight: '500',
+    fontFamily: 'rubik',
 
   },
 
@@ -257,6 +277,8 @@ export default StyleSheet.create({
     color: '#333333',
     fontWeight: '500',
     fontFamily: 'rubik',
+
+    marginLeft: '20%'
 
   },
 

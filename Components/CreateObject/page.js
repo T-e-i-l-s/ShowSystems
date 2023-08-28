@@ -30,20 +30,20 @@ export default function App({ route, navigation }) {
   const [description, setDescription] = useState('')
   const [owner, setOwner] = useState('')
   const [cnt, setCnt] = useState(0)
-  const [folther, setFolther] = useState('')
+  // const [folther, setFolther] = useState('')
 
 
   React.useEffect(() => { // Хук для загрузки данных
 
     const focusHandler = navigation.addListener('focus', () => {
 
-      if ( param != undefined ) {
+      if ( param[2] != undefined ) {
 
-        setName(param.name)
-        setDescription(param.description)
-        setOwner(param.owner)
-        setCnt(param.cnt)
-        setFolther(param.dir)
+        let arr = param[2]
+        setName(arr[0])
+        setCnt(arr[1])
+        setDescription(arr[2])
+        setOwner(arr[3])
 
       }
 
@@ -90,42 +90,52 @@ export default function App({ route, navigation }) {
   }
 
 
-
-  const updateFolther = (e) => { // Функция обработки данных из поля textInput
-
-    setFolther(e)
-
-  }
-
-
   const saveData = async () => { // Функция обработки данных из поля textInput
 
-    if ( name != param.name || description != param.description || owner != param.owner || cnt != param.cnt || folther != param.dir ) {
+    // if ( name != param.name || description != param.description || owner != param.owner || cnt != param.cnt ) {
 
-      const cityRef = await doc(db, 'ShowSystems', 'Equipment');
+    //   const cityRef = await doc(db, 'ShowSystems', 'Equipment');
 
-      let arr = [description, owner, cnt, folther]
-      if ( cnt == undefined ) {
-        arr[2] = 0
-      }
-      if ( description == undefined ) {
-        arr[0] = ''
-      }
-      if ( owner == undefined ) {
-        arr[1] = ''
-      }
-      if ( folther == undefined ) {
-        arr[3] = ''
-      }
+    //   let arr = [description, owner, cnt, folther]
+    //   if ( cnt == undefined ) {
+    //     arr[2] = 0
+    //   }
+    //   if ( description == undefined ) {
+    //     arr[0] = ''
+    //   }
+    //   if ( owner == undefined ) {
+    //     arr[1] = ''
+    //   }
 
-      await setDoc(cityRef, { [name]: arr }, { merge: true });
-      if ( name != param.name ) {
-        await updateDoc(cityRef, {
-          [param.name]: deleteField()
-        });
-      }
+    //   await setDoc(cityRef, { [name]: arr }, { merge: true });
+    //   if ( name != param.name ) {
+    //     await updateDoc(cityRef, {
+    //       [param.name]: deleteField()
+    //     });
+    //   }
       
+    // }
+
+    const res = [ cnt, description, owner ]
+    const dir = param[0]
+    if ( cnt == undefined ) {
+      res[0] = 0
     }
+    if ( description == undefined ) {
+      res[1] = ''
+    }
+    if ( owner == undefined ) {
+      res[2] = ''
+    }
+    let arr = param[1][dir]
+    if(arr == undefined){
+      arr = {}
+    }
+    console.log(res)
+    arr[name] = res
+
+    const cityRef = await doc(db, 'ShowSystems', 'Equipment')
+    await setDoc(cityRef, { [dir]: arr }, { merge: true })
 
     navigation.navigate('range')
 
@@ -185,13 +195,6 @@ export default function App({ route, navigation }) {
                   onChangeText={updateCnt}
                   value={cnt}
                   keyboardType="numeric"/>
-
-      <Text style={styles.inputName}>Папка</Text>
-      <TextInput style={styles.input}
-                  placeholder=''
-                  placeholderTextColor={'#333333'}
-                  onChangeText={updateFolther}
-                  value={folther}/>
 
 
       <Text style={styles.button} onPress={saveData}>Создать</Text>
