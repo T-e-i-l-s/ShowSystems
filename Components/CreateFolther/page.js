@@ -36,6 +36,7 @@ export default function App({ route, navigation }) {
 
       if ( param[2] != undefined ) {
 
+        console.log(param)
         setName(param[2])
         setEdit(true)
 
@@ -68,6 +69,14 @@ export default function App({ route, navigation }) {
 
   const saveData = async () => { // Функция обработки данных из поля textInput
 
+    if ( edit ){
+
+      editData()
+      navigation.navigate('range')
+      return
+
+    }
+
     const cityRef = await doc(db, 'ShowSystems', 'Folders');
 
     await setDoc(cityRef, { [name]: [] }, { merge: true });
@@ -77,6 +86,37 @@ export default function App({ route, navigation }) {
     }
     arr.push(name)
     await setDoc(cityRef, { [param[0]]: arr }, { merge: true });
+
+    navigation.navigate('range')
+
+  }
+
+
+  const editData = async () => { // Функция обработки данных из поля textInput
+
+    let cityRef = await doc(db, 'ShowSystems', 'Folders');
+
+    await updateDoc(cityRef, {
+      [param[2]]: deleteField()
+    });
+
+    await setDoc(cityRef, { [name]: param[3] }, { merge: true });
+    let arr = param[1]
+    if(param[1] == undefined){
+      arr = []
+    }
+    arr.splice(arr.indexOf(param[2],1))
+    arr.push(name)
+    console.log(arr)
+    await setDoc(cityRef, { [param[0]]: arr }, { merge: true });
+
+
+    cityRef = await doc(db, 'ShowSystems', 'Equipment');
+
+    await updateDoc(cityRef, {
+      [param[2]]: deleteField()
+    });
+    await setDoc(cityRef, { [name]: param[4] }, { merge: true });
 
     navigation.navigate('range')
 

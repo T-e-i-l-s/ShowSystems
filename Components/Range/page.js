@@ -52,6 +52,14 @@ export default function App ({ navigation }) {
   }
 
 
+  async function updateFolder(e) { // Функция перехода на экран создать устройство(для обновления)
+    
+    const param = [path[path.length-1], folderData[path[path.length-1]], e, folderData[e], equipData[e]]
+    navigation.navigate('createFolther', param)
+
+  }
+
+
   React.useEffect(() => { // Хук загрузки данных при переходе на страницу
 
     const focusHandler = navigation.addListener('focus', async () => {
@@ -321,18 +329,20 @@ export default function App ({ navigation }) {
         data={folders} 
         renderItem={({ item }) => (
 
-          <View style={styles.folderBlock} onStartShouldSetResponder={() => updatePage(item)}>
+          <View style={styles.folderBlock}>
             
             <View style={styles.iconBlock}>
               <Image style={styles.blockIcon}
               source={require('../../assets/icons/folder.png')}/>
             </View>
 
-            <Text style={styles.folder} numberOfLines={1}>{item}</Text>
+            <Text style={styles.folder} numberOfLines={1} onPress={() => updatePage(item)}>{item}</Text>
 
             <View style={styles.editBar}>
-              <Image style={styles.editIcon}
-              source={require('../../assets/icons/edit.png')}/>
+              <TouchableHighlight underlayColor={'rgba(255, 0, 255,0)'} onPress={() => updateFolder(item)}>
+                <Image style={styles.editIcon}
+                source={require('../../assets/icons/edit.png')}/>
+              </TouchableHighlight>
             </View>
 
           </View>
