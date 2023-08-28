@@ -321,14 +321,14 @@ export default function App ({ navigation }) {
         data={folders} 
         renderItem={({ item }) => (
 
-          <View style={styles.foltherBlock} onStartShouldSetResponder={() => updatePage(item)}>
+          <View style={styles.folderBlock} onStartShouldSetResponder={() => updatePage(item)}>
             
             <View style={styles.iconBlock}>
               <Image style={styles.blockIcon}
               source={require('../../assets/icons/folder.png')}/>
             </View>
 
-            <Text style={styles.folther} numberOfLines={1}>{item}</Text>
+            <Text style={styles.folder} numberOfLines={1}>{item}</Text>
 
             <View style={styles.editBar}>
               <Image style={styles.editIcon}

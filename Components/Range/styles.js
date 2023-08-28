@@ -54,7 +54,7 @@ export default StyleSheet.create({
   },
 
 
-  icon: { // Стиль иконок
+  icon: { // Первый стиль иконок
 
     height: 25,
     width: 25,
@@ -62,7 +62,7 @@ export default StyleSheet.create({
   },
 
 
-  icon2: { // Стиль иконок
+  icon2: { // Второй стиль иконок
 
     height: 33,
     width: 33,
@@ -85,7 +85,7 @@ export default StyleSheet.create({
   },
 
 
-  directory: {
+  directory: { // Стиль пути
 
     flexDirection: 'row',
 
@@ -98,8 +98,16 @@ export default StyleSheet.create({
 
   },
 
+  
+  pathList: { // Стиль списка папок в пути
 
-  path: { // Стиль заголовка страницы
+    width: '100%',
+    marginBottom: 10
+
+  },
+
+
+  path: { // Стиль текста пути
 
     flexDirection: 'column',
 
@@ -111,30 +119,33 @@ export default StyleSheet.create({
 
   },
 
+
+  iconBlock: { // Стиль блока с иконки view
+
+    width: "20%",
+
+    alignItems: 'center',
+    justifyContent: 'center',
+
+  },
+
+
+  blockIcon: { // Стиль иконки файла или устройства
+
+    height: 25,
+    width: 25,
+
+  },
+
   
-  list: { // Стиль списка устройств
+  list: { // Стиль списка файлов
 
     width: '100%'
 
   },
 
-  
-  list2: { // Стиль списка устройств
 
-    width: '100%'
-
-  },
-
-  
-  pathList: { // Стиль списка устройств
-
-    width: '100%',
-    marginBottom: 10
-
-  },
-
-
-  foltherBlock: {
+  folderBlock: { // Стиль блока файла
 
     flexDirection: 'row',
 
@@ -153,7 +164,7 @@ export default StyleSheet.create({
   },
 
 
-  folther: {
+  folder: { // Стиль названия файла
 
     width: '60%',
 
@@ -166,7 +177,15 @@ export default StyleSheet.create({
   },
 
 
-  iconBlock: {
+  editIcon: { // Стиль иконки "Редактировать"
+
+    height: 25,
+    width: 25,
+
+  },
+
+
+  editBar: { // Стиль блока иконки "Редактировать"
 
     width: "20%",
 
@@ -175,34 +194,15 @@ export default StyleSheet.create({
 
   },
 
+  
+  list2: { // Стиль списка устройств
 
-  editBar: {
-
-    width: "20%",
-
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: '100%'
 
   },
 
 
-  blockIcon: { // Стиль иконок
-
-    height: 25,
-    width: 25,
-
-  },
-
-
-  editIcon: { // Стиль иконок
-
-    height: 25,
-    width: 25,
-
-  },
-
-
-  block: {
+  block: { // Стиль блока устройства
 
     justifyContent: 'center',
     alignItems: 'flex-start',
@@ -219,7 +219,7 @@ export default StyleSheet.create({
   },
 
 
-  top: {
+  top: { // Стиль верхней части блока устройства
     
     flexDirection: 'row',
     width: '100%'
@@ -227,7 +227,7 @@ export default StyleSheet.create({
   },
 
 
-  name: {
+  name: { // Стиль названия устройства
 
     width: '40%',
 
@@ -240,7 +240,7 @@ export default StyleSheet.create({
   },
 
 
-  cnt: {
+  cnt: { // Стиль количества в блоке устройства
 
     width: '20%',
 
@@ -253,7 +253,7 @@ export default StyleSheet.create({
   },
 
 
-  moreIcon: { // Стиль иконок
+  moreIcon: { // Стиль иконки ***
 
     height: 20,
     width: 20,
@@ -261,14 +261,14 @@ export default StyleSheet.create({
   },
 
 
-  bottom: {
+  bottom: { // Стиль нижней части блока устройства
     
     width: '100%'
 
   },
 
 
-  button: {
+  button: { // Стиль кнопок и информации об устройстве
 
     width: '95%',
 
@@ -281,7 +281,5 @@ export default StyleSheet.create({
     marginLeft: '20%'
 
   },
-
-
 
 });
