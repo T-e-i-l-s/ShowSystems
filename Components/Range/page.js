@@ -4,21 +4,25 @@ import { Text, View, Image, TouchableHighlight, FlatList } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import styles from './styles'
 import React , { useState } from 'react'
-import db from '../../Hooks/initFirebase'
+import db from '../../Hooks/InitFirebase'
 import { doc, getDoc, setDoc, updateDoc, deleteField } from 'firebase/firestore/lite'
+import alert from '../../Hooks/alert'
 
 
 let flag = false // Переменная для проверки состояния данных
 
 
-export default function App ({ navigation }) {
+export default function App ({ route, navigation }) {
 
+  const param = route.params
   const [folders,setFolders] = useState([]) // Список папок на экране
   const [equip,setEquip] = useState([]) // Список оборудования на экране
   const [path,setPath] = useState(['Склад']) // Путь
   const [folderData,setFolderData] = useState() // Данные о всех папках
   const [equipData,setEquipData] = useState() // Данные о всех устройствах
   const [show,setShow] = useState([]) // Состояние dropdown списков
+  const [reload,setReload] = useState(0) // Состояние dropdown списков
+  const [showBackButton,setShowBackButton] = useState(false) // Состояние dropdown списков
 
 
   const toMenu = () => { // Функция перехода на экран меню
@@ -30,7 +34,8 @@ export default function App ({ navigation }) {
 
   const toCreateFolther = () => { // Функция перехода на экран создать папку(для создания)
 
-    const param = [path[path.length-1], folderData[path[path.length-1]]]
+    setShow([])
+    const param = [[path[path.length-1], folderData[path[path.length-1]]], folderData]
     navigation.navigate('createFolther', param)
 
   }
@@ -38,6 +43,7 @@ export default function App ({ navigation }) {
 
   const toCreateEquip = () => { // Функция перехода на экран создать устройство(для создания)
 
+    setShow([])
     const param = [path[path.length-1], equipData]
     navigation.navigate('addEquipment', param)
 
@@ -54,7 +60,7 @@ export default function App ({ navigation }) {
 
   async function updateFolder(e) { // Функция перехода на экран создать устройство(для обновления)
     
-    const param = [path[path.length-1], folderData[path[path.length-1]], e, folderData[e], equipData[e]]
+    const param = [[path[path.length-1], folderData[path[path.length-1]], e, folderData[path[path.length-1]], equipData[path[path.length-1]]], folderData]
     navigation.navigate('createFolther', param)
 
   }
@@ -101,8 +107,11 @@ export default function App ({ navigation }) {
     if ( !flag ) {
 
       flag = true
-      const arr = result['Склад']
+      let arr = result['Склад']
       let arr2 = []
+      if( arr == undefined ) {
+        arr = []
+      }
       Object.keys(arr).forEach(e => {
         arr2.push([e,arr[e][0],arr[e][1],arr[e][2]])
         arr3.push(false)
@@ -130,6 +139,8 @@ export default function App ({ navigation }) {
 
   async function updatePage ( folther ) { // Функция обновления данных на странице при переходе между папками
 
+    setShowBackButton(true)
+
     path.push(folther)
     setFolders(folderData[folther])
 
@@ -155,6 +166,12 @@ export default function App ({ navigation }) {
 
 
   async function back (folther) { // Функция обновления данных на странице при возвращении на страницу
+
+    if ( folther == 'Склад' ){
+      setShowBackButton(false)
+    } else {
+      setShowBackButton(true)
+    }
 
     let arr = path
 
@@ -215,49 +232,119 @@ export default function App ({ navigation }) {
 
   async function deleteData(e) { // Функция удаления данных
 
-    // Удаляем локально
-    let arr = equipData[path[path.length-1]]
-    let arr2 = {}
+    await alert('Удалить устройство ' + e + '?','', [
+      {
+        text: 'Отмена',
+        onPress: () => {},
+        style: 'cancel',
+      },
+      {text: 'Удалить', onPress: async () => {
 
-    Object.keys(arr).forEach(el => {
+        // Удаляем локально
+        let arr = equipData[path[path.length-1]]
+        let arr2 = {}
 
-      if ( el != e ) {
+        Object.keys(arr).forEach(el => {
 
-        arr2[el] = arr[el]
+          if ( el != e ) {
 
-      }
+            arr2[el] = arr[el]
 
-    })
+          }
 
-    let arr3 = equipData
-    arr3[path[path.length-1]] = arr2
-    setEquipData(arr3)
+        })
+
+        let arr3 = equipData
+        arr3[path[path.length-1]] = arr2
+        setEquipData(arr3)
+
+        // Удаляем в бд
+        const cityRef = await doc(db, 'ShowSystems', 'Equipment');
+        await setDoc(cityRef, { [path[path.length-1]]: arr2 } , { merge: true });
+        const folther = path[path.length-1]
+
+        const result = equipData
+        arr = result[folther]
+        arr2 = []
+        arr3 = []
+
+        if ( arr != undefined || arr != null ) {
+
+          Object.keys(arr).forEach(e => {
+
+            arr2.push([e,arr[e][0],arr[e][1],arr[e][2]])
+            arr3.push(false)
+            setShow(arr3)
+
+          });
+
+        }
+
+        setEquip(arr2)
+            
+      }},
+    ])
+
+  }
 
 
-    // Удаляем в бд
-    const cityRef = await doc(db, 'ShowSystems', 'Equipment');
-    console.log(arr2)
-    await setDoc(cityRef, arr3, { merge: false });
-    const folther = path[path.length-1]
+  async function deleteFolder(e) { // Функция удаления данных
 
-    const result = equipData
-    arr = result[folther]
-    arr2 = []
-    arr3 = []
-
-    if ( arr != undefined || arr != null ) {
-
-      Object.keys(arr).forEach(e => {
-
-        arr2.push([e,arr[e][0],arr[e][1],arr[e][2]])
-        arr3.push(false)
-        setShow(arr3)
-
-      });
-
+    if ( folderData[e].length > 0 ) {
+      await alert('В данной папке остались другие объекты, пожалуйста удалите их','', [])
+      return
     }
 
-    setEquip(arr2)
+    await alert('Удалить папку ' + e + '?','', [
+      {
+        text: 'Отмена',
+        onPress: () => {},
+        style: 'cancel',
+      },
+      {text: 'Удалить', onPress: async () => {
+
+        let cityRef = doc(db, 'ShowSystems', 'Folders');
+
+        await updateDoc(cityRef, {
+          [e]: deleteField()
+        });
+        
+        let arr = folders
+        arr.splice(arr.indexOf(e),1)
+
+        let arr2 = folderData
+        arr2[path[path.length-1]] = arr
+        
+        let arr3 = {}
+
+        Object.keys(arr2).forEach(el => {
+
+          if ( el != e ) {
+
+            arr3[el] = arr2[el]
+
+          }
+
+        })
+
+        arr2 = arr3
+
+        
+        setFolders(arr)
+        setFolderData(arr2)
+
+        await setDoc(cityRef, { [path[path.length-1]]: arr }, { merge: true });
+
+        cityRef = doc(db, 'ShowSystems', 'Equipment');
+
+        await updateDoc(cityRef, {
+          [e]: deleteField()
+        });
+
+        setReload(reload+1)
+                
+      }},
+    ])
 
   }
 
@@ -268,7 +355,7 @@ export default function App ({ navigation }) {
 
 
       <StatusBar style="auto" />
-
+      
 
       <View style={styles.header}>
 
@@ -277,8 +364,22 @@ export default function App ({ navigation }) {
 
           <TouchableHighlight underlayColor={'rgba(255, 0, 255,0)'} onPress={toMenu}>
             <Image style={styles.icon}
-            source={require('../../assets/icons/back.png')}/>
+            source={require('../../assets/icons/home.png')}/>
           </TouchableHighlight>
+
+          
+          {
+
+            showBackButton ? (
+
+              <TouchableHighlight underlayColor={'rgba(255, 0, 255,0)'} onPress={() => back(path[path.length-2])}>
+                <Image style={[styles.icon, {marginLeft: 5}]}
+                source={require('../../assets/icons/back.png')}/>
+              </TouchableHighlight>
+
+            ): null
+          
+          }
 
         </View>
 
@@ -291,12 +392,12 @@ export default function App ({ navigation }) {
         <View style={styles.rightBar}>
 
           <TouchableHighlight underlayColor={'rgba(255, 0, 255,0)'} onPress={toCreateFolther}>
-            <Image style={styles.icon2}
+            <Image style={styles.icon}
             source={require('../../assets/icons/folder.png')}/>
           </TouchableHighlight>
 
           <TouchableHighlight underlayColor={'rgba(255, 0, 255,0)'} onPress={toCreateEquip}>
-            <Image style={[styles.icon2,{marginLeft: 10}]}
+            <Image style={[styles.icon,{marginLeft: 10}]}
             source={require('../../assets/icons/audio.png')}/>
           </TouchableHighlight>
 
@@ -309,6 +410,7 @@ export default function App ({ navigation }) {
       <View style={styles.directory}>
 
         <FlatList 
+        extraData={reload}
         scrollEnabled={true} 
         horizontal={true} 
         style={styles.pathList} 
@@ -336,12 +438,19 @@ export default function App ({ navigation }) {
               source={require('../../assets/icons/folder.png')}/>
             </View>
 
-            <Text style={styles.folder} numberOfLines={1} onPress={() => updatePage(item)}>{item}</Text>
+            <Text style={[styles.folder,{width: "60%"}]} numberOfLines={1} onPress={() => updatePage(item)}>{item}</Text>
 
-            <View style={styles.editBar}>
+            <View style={[styles.editBar,{width: "10%"}]}>
               <TouchableHighlight underlayColor={'rgba(255, 0, 255,0)'} onPress={() => updateFolder(item)}>
                 <Image style={styles.editIcon}
                 source={require('../../assets/icons/edit.png')}/>
+              </TouchableHighlight>
+            </View>
+
+            <View style={styles.editBar}>
+              <TouchableHighlight underlayColor={'rgba(255, 0, 255,0)'} onPress={() => deleteFolder(item)}>
+                <Image style={styles.editIcon}
+                source={require('../../assets/icons/trash.png')}/>
               </TouchableHighlight>
             </View>
 

@@ -25,9 +25,12 @@ const db = getFirestore(app)
 export default function App({ route, navigation }) {
 
   // Данные для textInput
-  const param = route.params
+  const param = route.params[0]
+  const param2 = route.params[1]
   const [name, setName] = useState('')
   const [edit, setEdit] = useState(false)
+  const [pageTitle, setPageTitle] = useState('Добавить папку')
+  const [buttonTitle, setButtonTitle] = useState('Создать')
 
 
   React.useEffect(() => { // Хук для загрузки данных
@@ -36,7 +39,8 @@ export default function App({ route, navigation }) {
 
       if ( param[2] != undefined ) {
 
-        console.log(param)
+        setPageTitle('Редактировать папку')
+        setButtonTitle('Изменить')
         setName(param[2])
         setEdit(true)
 
@@ -67,47 +71,67 @@ export default function App({ route, navigation }) {
   }
 
 
-  const saveData = async () => { // Функция обработки данных из поля textInput
+  const saveData = async () => { // Функция сохранения данных
+
+    let flag = false
+    let arr = param2
+    if(arr != undefined && arr != null){
+      Object.keys(arr).forEach(el => {
+  
+        if(el == name){
+          flag = true
+          return
+        }
+  
+      })
+    }
+
+    if(flag){
+      await alert('Такая папка уже существует','')
+      return
+    }
+
 
     if ( edit ){
 
-      editData()
+      await editData()
+
+    } else {
+
+      const cityRef = await doc(db, 'ShowSystems', 'Folders');
+
+      await setDoc(cityRef, { [name]: [] }, { merge: true });
+      let arr = param[1]
+      if(arr == undefined){
+        arr = []
+      }
+      arr.push(name)
+      await setDoc(cityRef, { [param[0]]: arr }, { merge: true });
+
       navigation.navigate('range')
-      return
 
     }
 
-    const cityRef = await doc(db, 'ShowSystems', 'Folders');
+  }
+
+
+  const editData = async () => { // Функция обновления данных
+
+    let cityRef = await doc(db, 'ShowSystems', 'Folders');
+
+    console.log(param)
+
+    await updateDoc(cityRef, {
+      [param[2]]: deleteField()
+    });
 
     await setDoc(cityRef, { [name]: [] }, { merge: true });
     let arr = param[1]
     if(param[1] == undefined){
       arr = []
     }
+    arr.splice(arr.indexOf(param[2]),1)
     arr.push(name)
-    await setDoc(cityRef, { [param[0]]: arr }, { merge: true });
-
-    navigation.navigate('range')
-
-  }
-
-
-  const editData = async () => { // Функция обработки данных из поля textInput
-
-    let cityRef = await doc(db, 'ShowSystems', 'Folders');
-
-    await updateDoc(cityRef, {
-      [param[2]]: deleteField()
-    });
-
-    await setDoc(cityRef, { [name]: param[3] }, { merge: true });
-    let arr = param[1]
-    if(param[1] == undefined){
-      arr = []
-    }
-    arr.splice(arr.indexOf(param[2],1))
-    arr.push(name)
-    console.log(arr)
     await setDoc(cityRef, { [param[0]]: arr }, { merge: true });
 
 
@@ -116,7 +140,10 @@ export default function App({ route, navigation }) {
     await updateDoc(cityRef, {
       [param[2]]: deleteField()
     });
-    await setDoc(cityRef, { [name]: param[4] }, { merge: true });
+
+    if(param[4] != undefined){
+      await setDoc(cityRef, { [name]: param[4] }, { merge: true });
+    }
 
     navigation.navigate('range')
 
@@ -136,7 +163,7 @@ export default function App({ route, navigation }) {
           source={require('../../assets/icons/back.png')}/>
         </TouchableHighlight>
 
-        <Text style={styles.title}>Создать папку</Text>
+        <Text style={styles.title}>{pageTitle}</Text>
 
         <View style={{width: '10%'}} >
 
@@ -153,7 +180,7 @@ export default function App({ route, navigation }) {
                   value={name}/>
 
 
-      <Text style={styles.button} onPress={saveData}>Создать</Text>
+      <Text style={styles.button} onPress={saveData}>{buttonTitle}</Text>
       
     </SafeAreaView>
 

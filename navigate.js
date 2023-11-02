@@ -29,7 +29,7 @@ export default function Navigate () {
         name="range"
         component={ range }
         options={ { headerShown: false, animationTypeForReplace: 'pop' } }
-        initialParams={false}
+        initialParams={[]}
       />
       <Stack.Screen
         name="addEquipment"

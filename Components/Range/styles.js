@@ -33,9 +33,10 @@ export default StyleSheet.create({
 
   leftBar: { // Левая чась бара
 
-    flexDirection: 'column',
-    
-    alignItems: 'flex-start',
+    flexDirection: 'row',
+
+    alignItems: 'center',
+    justifyContent: 'flex-start',
 
     width: '20%',
 
@@ -76,7 +77,7 @@ export default StyleSheet.create({
 
     width: '60%',
 
-    fontSize: 25,
+    fontSize: 22,
     textAlign: 'center',
     color: '#333333',
     fontWeight: '400',
@@ -187,6 +188,8 @@ export default StyleSheet.create({
 
   editBar: { // Стиль блока иконки "Редактировать"
 
+    flexDirection: 'row',
+    
     width: "20%",
 
     alignItems: 'center',
@@ -270,7 +273,7 @@ export default StyleSheet.create({
 
   button: { // Стиль кнопок и информации об устройстве
 
-    width: '95%',
+    width: '70%',
 
     fontSize: 19,
     textAlign: 'left',
